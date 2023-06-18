@@ -1,0 +1,71 @@
+<?php
+
+namespace CyberWolfStudio\Lingua;
+
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use JsonException;
+
+class TranslationPayload
+{
+    /**
+     * Compile all the local translations.
+     *
+     * @param array $locales
+     * @return Collection
+     * @throws JsonException
+     */
+    public static function compile(array $locales = []): Collection
+    {
+        $payload = new static();
+
+        $translations = [];
+
+        foreach ($locales as $locale) { // supported locales
+            $translations[$locale] = [
+                'php' => $payload->phpTranslations($locale),
+                'json' => $payload->jsonTranslations($locale),
+            ];
+        }
+
+        return collect($translations);
+    }
+
+    /**
+     * Compile the PHP file translations.
+     *
+     * @param string $locale
+     * @return array
+     */
+    private function phpTranslations(string $locale): array
+    {
+        $path = lang_path($locale);
+
+        return collect(File::allFiles($path))->flatMap(function (\SplFileInfo $file) use ($locale) {
+            $key = str($file->getPathname())->replace([lang_path(), $locale, '.php'], '')->substr(2)->toString();
+            $keyPath = explode('/', $key);
+            rsort($keyPath);
+            return array_reduce($keyPath, static fn(array|string $carry, string $item) => [
+                $item => $carry
+            ], trans($key, [], $locale));
+        })->toArray();
+    }
+
+    /**
+     * Compile the JSON file translations.
+     *
+     * @param string $locale
+     * @return array
+     * @throws JsonException
+     */
+    private function jsonTranslations(string $locale): array
+    {
+        $path = lang_path("$locale.json");
+
+        if (is_string($path) && is_readable($path)) {
+            return json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return [];
+    }
+}
