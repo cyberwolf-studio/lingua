@@ -27,8 +27,5 @@
                 "CyberWolfStudio\\Lingua\\LinguaServiceProvider"
             ]
         }
-    },
-    "require-dev": {
-        "jetstreamlabs/pinte": "^1.0"
     }
 }
