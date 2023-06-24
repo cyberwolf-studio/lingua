@@ -14,13 +14,20 @@ export const LinguaVue = {
             locale: configuration.value.locale
         })
 
+        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, {
+            Lingua: configuration.value.Lingua,
+            locale: configuration.value.locale
+        })
+
         v.mixin({
             methods: {
                 __: translationCallback,
-                trans: translationCallback
+                trans: translationCallback,
+                transChoice: translationWithPluralizationCallback
             }
         });
         v.provide('trans', translationCallback)
+        v.provide('transChoice', translationWithPluralizationCallback)
         v.provide('setLocale', (loc) => {
             locale.value = loc
         })
