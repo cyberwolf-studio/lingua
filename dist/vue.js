@@ -9,12 +9,12 @@ export const LinguaVue = {
             Lingua: options.Lingua
         }))
 
-        const translationCallback = (key, replace, config = configuration) => trans(key, replace, {
+        const translationCallback = (key, replace, config = configuration) => trans(key, replace, false, {
             Lingua: configuration.value.Lingua,
             locale: configuration.value.locale
         })
 
-        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, {
+        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, false, {
             Lingua: configuration.value.Lingua,
             locale: configuration.value.locale
         })
