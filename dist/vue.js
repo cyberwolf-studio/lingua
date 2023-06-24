@@ -14,7 +14,7 @@ export const LinguaVue = {
             locale: configuration.value.locale
         })
 
-        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, false, {
+        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, true, {
             Lingua: configuration.value.Lingua,
             locale: configuration.value.locale
         })
