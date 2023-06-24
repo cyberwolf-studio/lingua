@@ -41,14 +41,14 @@ class TranslationPayload
     {
         $path = lang_path($locale);
 
-        return collect(File::allFiles($path))->flatMap(function (\SplFileInfo $file) use ($locale) {
+        return collect(File::allFiles($path))->mapWithKeys(function (\SplFileInfo $file) use ($locale) {
             $key = str($file->getPathname())->replace([lang_path(), $locale, '.php'], '')->substr(2)->toString();
             $keyPath = explode('/', $key);
-            rsort($keyPath);
-            return array_reduce($keyPath, static fn(array|string $carry, string $item) => [
-                $item => $carry
-            ], trans($key, [], $locale));
-        })->toArray();
+            $keyPath = array_reverse($keyPath);
+            return [
+                str($key)->replace('/', '.')->toString() => trans($key, [], $locale)
+            ];
+        })->undot()->toArray();
     }
 
     /**
