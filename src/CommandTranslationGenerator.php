@@ -74,7 +74,7 @@ final class CommandTranslationGenerator extends Command
         $directories = File::directories(lang_path());
 
         foreach ($directories as $dir) {
-            $path = str_replace(lang_path() . '/', '', $dir);
+            $path = str_replace(lang_path() . DIRECTORY_SEPARATOR, '', $dir);
             $locales[] = $path;
         }
 
