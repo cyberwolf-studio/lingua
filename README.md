@@ -56,6 +56,26 @@ Install it using you package manager and just add this lines to your `vite.confi
 })
 ```
 
+Example of usage: (running only at serve process)
+```
+{
+            ...run([
+                {
+                    name: 'generate translations',
+                    run: ['php', 'artisan', 'lingua:generate'],
+                    pattern: ['resources/lang/**', 'lang/**'],
+                },
+                {
+                    name: 'generate ziggy',
+                    run: ['php', 'artisan', 'ziggy:generate'],
+                    pattern: ['routes/**'],
+                }
+            ]),
+            apply: 'serve'
+        }
+```
+
+
 
 ### VueJS
 
