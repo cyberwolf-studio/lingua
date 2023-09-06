@@ -4,10 +4,10 @@ const Lingua = {
         en: {
             php: {
                 choice: {
-                    three: '{0} There are none|[1,19] There are some|[20,*] There are many',
                     concrete_number: '{0} There are none|{5} There are five|[6,9] There are more than five, but less than ten|[10,*] There are more than ten',
                 },
-                replace: '{1} There is only one user online|[2,*] There are :count users online'
+                replace: '{1} There is only one user online|[2,*] There are :count users online',
+                simpleTransChoice: 'There is one post|There are many posts'
             }
         }
     }
@@ -26,7 +26,12 @@ test('trans is returning second choice option when count is 5', () => {
 test('trans is returning first choice option when count is 0', () => {
     expect(trans('choice.concrete_number', { count: 0 }, true, config)).toBe('There are none')
 });
-
+test('trans is returning first simple choice option when count is 1', () => {
+    expect(trans('simpleTransChoice', {count: 1}, true, config)).toBe('There is one post')
+})
+test('trans is returning second simple choice option when count is 5', () => {
+    expect(trans('simpleTransChoice', { count: 5 }, true, config)).toBe('There are many posts')
+})
 
 //Range pattern matching
 test('trans is returning third choice option when count is 6', () => {
