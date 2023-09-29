@@ -18,6 +18,11 @@ const Lingua = {
                     title: 'Settings',
                 }
             }
+        },
+        pl: {
+            php: {
+                dashboard: 'Panel'
+            }
         }
     }
 }
@@ -38,3 +43,11 @@ test('trans is translating nested object', () => {
 test('trans is replacing key', () => {
     expect(trans('replace', { user: 'World' }, false, config)).toBe('Welcome, World')
 });
+
+test('trans is working with locale uppercase', () => {
+    const uppercaseConfig = {
+        Lingua: Lingua,
+        locale: "PL"
+    }
+    expect(trans('dashboard', {}, false, uppercaseConfig)).toBe('Panel')
+})
