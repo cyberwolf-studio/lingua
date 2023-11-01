@@ -42,7 +42,10 @@ class TranslationPayload
         $path = lang_path($locale);
 
         return collect(File::allFiles($path))->mapWithKeys(function (\SplFileInfo $file) use ($locale) {
-            $key = str($file->getPathname())->replace([lang_path(), $locale, '.php'], '')->substr(2)->toString();
+            $key = str($file->getPathname())
+                ->replace([lang_path(), '.php'], '')
+                ->replace('/'.$locale.'/', '')
+                ->toString();
             $keyPath = explode('/', $key);
             $keyPath = array_reverse($keyPath);
             return [
