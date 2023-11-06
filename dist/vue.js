@@ -1,9 +1,11 @@
 import {trans} from './translator.js'
-import {computed, ref} from "vue";
+import {computed} from "vue";
+import { usePage } from '@inertiajs/vue3'
+
 // prettier-ignore
 export const LinguaVue = {
     install: (v, options) => {
-        const locale = ref(options.locale)
+        const locale = computed(() => usePage().props?.locale)
         const configuration = computed(() => ({
             locale: locale.value,
             Lingua: options.Lingua
@@ -28,9 +30,6 @@ export const LinguaVue = {
         });
         v.provide('trans', translationCallback)
         v.provide('transChoice', translationWithPluralizationCallback)
-        v.provide('setLocale', (loc) => {
-            locale.value = loc
-        })
         v.provide('locale', locale)
         return v
     }
