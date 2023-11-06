@@ -90,7 +90,6 @@ and register LinguaVue plugin
 ```js
 ...
 .use(LinguaVue, {
-    locale: props.initialPage.props.locale,
     Lingua
 })
 ```
