@@ -128,10 +128,6 @@ You can also use trans in your `setup` function by injecting it.
 const trans = inject('trans') 
 ```
 
-To change locale on JS side, you can use `setLocale` function.
+# Changelog
 
-```js
-const setLocale = inject('setLocale')
-setLocale(locale)
-```
-This will change your current locale **only on JS side**, to change your app locale on PHP side — use the default method, Lingua will automatically catch it.
+All changes made here will be described in [Changelog.md](./CHANGELOG.md) file.
