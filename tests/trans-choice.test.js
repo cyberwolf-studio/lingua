@@ -59,3 +59,58 @@ test('trans is returning first choice option with replace', () => {
 test('trans is returning second choice option with replace', () => {
     expect(trans('replace', { count: 20 }, true, config)).toBe('There are 20 users online')
 });
+
+// These are the test cases from the laravel framework, class Illuminate\Tests\Translation\TranslationMessageSelectorTest
+// format: [expected, message, number]
+const laravelTranslationMessageSelectorTestData = [
+    ['first', 'first', 1],
+    ['first', 'first', 10],
+    ['first', 'first|second', 1],
+    ['second', 'first|second', 10],
+    ['second', 'first|second', 0],
+
+    ['first', '{0}  first|{1}second', 0],
+    ['first', '{1}first|{2}second', 1],
+    ['second', '{1}first|{2}second', 2],
+    ['first', '{2}first|{1}second', 2],
+    ['second', '{9}first|{10}second', 0],
+    ['first', '{9}first|{10}second', 1],
+    ['', '{0}|{1}second', 0],
+    ['', '{0}first|{1}', 1],
+    ['first', '{1.3}first|{2.3}second', 1.3],
+    ['second', '{1.3}first|{2.3}second', 2.3],
+    [`first
+    line`, `{1}first
+    line|{2}second`, 1],
+    [`first \n
+    line`, `{1}first \n
+    line|{2}second`, 1],
+
+    ['first', '{0}  first|[1,9]second', 0],
+    ['second', '{0}first|[1,9]second', 1],
+    ['second', '{0}first|[1,9]second', 10],
+    ['first', '{0}first|[2,9]second', 1],
+    ['second', '[4,*]first|[1,3]second', 1],
+    ['first', '[4,*]first|[1,3]second', 100],
+    ['second', '[1,5]first|[6,10]second', 7],
+    ['first', '[*,4]first|[5,*]second', 1],
+    ['second', '[5,*]first|[*,4]second', 1],
+    ['second', '[5,*]first|[*,4]second', 0],
+
+    ['first', '{0}first|[1,3]second|[4,*]third', 0],
+    ['second', '{0}first|[1,3]second|[4,*]third', 1],
+    ['third', '{0}first|[1,3]second|[4,*]third', 9],
+
+    ['first', 'first|second|third', 1],
+    ['second', 'first|second|third', 9],
+    ['second', 'first|second|third', 0],
+
+    ['first', '{0}  first | { 1 } second', 0],
+    ['first', '[4,*]first | [1,3]second', 100],
+
+]
+
+it.each(laravelTranslationMessageSelectorTestData)('passes laravel test case [%s, %s, %s]', (expected, message, number) => {
+    const result = trans(message, { count: number }, true, config)
+    expect(result).toBe(expected)
+});
