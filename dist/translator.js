@@ -1,5 +1,5 @@
 export const trans = (key, replace, pluralize, config) => {
-    const locale = config.locale
+    const locale = config.locale.toLowerCase()
     const Lingua = config.Lingua
 
     let translation = null
