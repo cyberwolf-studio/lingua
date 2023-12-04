@@ -114,3 +114,13 @@ it.each(laravelTranslationMessageSelectorTestData)('passes laravel test case [%s
     const result = trans(message, { count: number }, true, config)
     expect(result).toBe(expected)
 });
+
+
+/*
+test.only('one-by-one', () => {
+    const [expected, message, number] = ['first', '{0}  first|{1}second', 0]
+    console.log(expected, message, number, 'CASE')
+    const result = trans(message, { count: number }, true, config)
+    expect(result).toBe(expected)
+})
+*/
