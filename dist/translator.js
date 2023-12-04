@@ -75,7 +75,7 @@ const pluralize = (sentence, count) => {
     }
 
     //Get ranged pattern parts
-    const rangedPattern = /\[(?<start>\d+),(?<end>\d+|\*)][^\|]*/g
+    const rangedPattern = /\[(?<start>\d+|\*),(?<end>\d+|\*)][^\|]*/g
     const rangedParts = parts.map(part => {
         let matched = [...part.matchAll(rangedPattern)]
         if (matched.length <= 0) {
@@ -94,7 +94,7 @@ const pluralize = (sentence, count) => {
     while (i < rangedParts.length) {
         const p = rangedParts[i]
 
-        if (count >= p.start) {
+        if (count >= p.start || isNaN(p.start)) {
             if (count <= p.end || p.end === true) {
                 return p.value
             }
