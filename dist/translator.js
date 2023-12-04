@@ -102,7 +102,7 @@ const pluralize = (sentence, count) => {
 
     if(trans.length > 1){
         const index = count == 1 ? 0 : 1;
-        return parts[index]
+        return parts[index] ?? parts[0]
     }
 
     return sentence
