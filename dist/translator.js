@@ -52,7 +52,7 @@ const pluralize = (sentence, count) => {
     let parts = sentence.split('|')
 
     //Get SOLO number pattern parts
-    const soloPattern = /{(?<count>\d)}[^\|]*/g
+    const soloPattern = /{(?<count>\d+\.?\d*)}[^\|]*/g
     const soloParts = parts.map(part => {
         let matched = [...part.matchAll(soloPattern)]
         if (matched.length <= 0) {
@@ -60,7 +60,7 @@ const pluralize = (sentence, count) => {
         }
         matched = matched[0]
         return {
-            count: parseInt(matched[1]),
+            count: 1*matched[1],
             value: stripConditions(matched[0]).trim()
         }
     }).filter((o) => o !== undefined)
