@@ -31,7 +31,6 @@ export const trans = (key, replace, pluralize, config) => {
 
 const translate = (translation, replace, shouldPluralize) => {
     let translated = shouldPluralize ? pluralize(translation, replace.count) : translation
-
     if (typeof replace === 'undefined') {
         return translation
     }
@@ -44,6 +43,10 @@ const translate = (translation, replace, shouldPluralize) => {
     return translated
 }
 
+const stripConditions = (sentence) => {
+    const ret =  sentence.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, '')
+    return ret
+}
 
 const pluralize = (sentence, count) => {
     let parts = sentence.split('|')
@@ -58,7 +61,7 @@ const pluralize = (sentence, count) => {
         matched = matched[0]
         return {
             count: parseInt(matched[1]),
-            value: matched[0].replace(`{${matched[1]}}`, '').trim()
+            value: stripConditions(matched[0]).trim()
         }
     }).filter((o) => o !== undefined)
     let i = 0;
@@ -102,7 +105,7 @@ const pluralize = (sentence, count) => {
 
     if(trans.length > 1){
         const index = count == 1 ? 0 : 1;
-        return parts[index] ?? parts[0]
+        return stripConditions(parts[index] ?? parts[0]).trim()
     }
 
     return sentence
