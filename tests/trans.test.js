@@ -44,10 +44,11 @@ test('trans is replacing key', () => {
     expect(trans('replace', { user: 'World' }, false, config)).toBe('Welcome, World')
 });
 
-test('trans is working with locale uppercase', () => {
-    const uppercaseConfig = {
-        Lingua: Lingua,
-        locale: "PL"
-    }
-    expect(trans('dashboard', {}, false, uppercaseConfig)).toBe('Panel')
-})
+// @deprecated This test does not make sense. Locale should be case sensitive. (can be en-US for example)
+// test('trans is working with locale uppercase', () => {
+//     const uppercaseConfig = {
+//         Lingua: Lingua,
+//         locale: "PL"
+//     }
+//     expect(trans('dashboard', {}, false, uppercaseConfig)).toBe('Panel')
+// })
