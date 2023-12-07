@@ -1,5 +1,5 @@
 export const trans = (key, replace, pluralize, config) => {
-    const locale = config.locale
+    const locale = config.locale.toLowerCase()
     const Lingua = config.Lingua
 
     let translation = null
@@ -31,7 +31,6 @@ export const trans = (key, replace, pluralize, config) => {
 
 const translate = (translation, replace, shouldPluralize) => {
     let translated = shouldPluralize ? pluralize(translation, replace.count) : translation
-
     if (typeof replace === 'undefined') {
         return translation
     }
@@ -44,12 +43,16 @@ const translate = (translation, replace, shouldPluralize) => {
     return translated
 }
 
+const stripConditions = (sentence) => {
+    const ret =  sentence.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, '')
+    return ret
+}
 
 const pluralize = (sentence, count) => {
     let parts = sentence.split('|')
 
     //Get SOLO number pattern parts
-    const soloPattern = /{(?<count>\d)}[^\|]*/g
+    const soloPattern = /{(?<count>\d+\.?\d*)}[^\|]*/g
     const soloParts = parts.map(part => {
         let matched = [...part.matchAll(soloPattern)]
         if (matched.length <= 0) {
@@ -57,8 +60,8 @@ const pluralize = (sentence, count) => {
         }
         matched = matched[0]
         return {
-            count: parseInt(matched[1]),
-            value: matched[0].replace(`{${matched[1]}}`, '').trim()
+            count: 1*matched[1],
+            value: stripConditions(matched[0]).trim()
         }
     }).filter((o) => o !== undefined)
     let i = 0;
@@ -72,7 +75,7 @@ const pluralize = (sentence, count) => {
     }
 
     //Get ranged pattern parts
-    const rangedPattern = /\[(?<start>\d+),(?<end>\d+|\*)][^\|]*/g
+    const rangedPattern = /\[(?<start>\d+|\*),(?<end>\d+|\*)][^\|]*/g
     const rangedParts = parts.map(part => {
         let matched = [...part.matchAll(rangedPattern)]
         if (matched.length <= 0) {
@@ -91,7 +94,7 @@ const pluralize = (sentence, count) => {
     while (i < rangedParts.length) {
         const p = rangedParts[i]
 
-        if (count >= p.start) {
+        if (count >= p.start || isNaN(p.start)) {
             if (count <= p.end || p.end === true) {
                 return p.value
             }
@@ -102,7 +105,7 @@ const pluralize = (sentence, count) => {
 
     if(trans.length > 1){
         const index = count == 1 ? 0 : 1;
-        return parts[index]
+        return stripConditions(parts[index] ?? parts[0]).trim()
     }
 
     return sentence
