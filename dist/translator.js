@@ -1,32 +1,35 @@
 export const trans = (key, replace, pluralize, config) => {
-    const locale = config.locale.toLowerCase()
-    const Lingua = config.Lingua
+    const locale = config?.locale?.toLowerCase() ?? 'en'
+    const fallbackLocale = config?.fallbackLocale?.toLowerCase()
+    const Lingua = config.Lingua ?? {}
 
-    let translation = null
+    // Check if the key is a translation key
+    let translation = getTranslation(key, locale, Lingua)
 
+    // If not, check if the key is a translation key in the fallback locale
+    if (!translation && fallbackLocale) {
+        translation = getTranslation(key, fallbackLocale, Lingua)
+    }
+
+    return translate(translation ?? key, replace, pluralize)
+}
+
+const getTranslation = (key, locale, Lingua) => {
     try {
-        translation = key
+        return key
             .split('.')
             .reduce((t, i) => t[i] || null, Lingua.translations[locale].php)
-
-        if (translation) {
-            return translate(translation, replace, pluralize)
-        }
     } catch (e) {
     }
 
     try {
-        translation = key
+        return key
             .split('.')
             .reduce((t, i) => t[i] || null, Lingua.translations[locale].json)
-
-        if (translation) {
-            return translate(translation, replace, pluralize)
-        }
     } catch (e) {
     }
 
-    return translate(key, replace, pluralize)
+    return null
 }
 
 const translate = (translation, replace, shouldPluralize) => {

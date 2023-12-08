@@ -5,12 +5,14 @@ const Lingua = {
             php: {
                 dashboard: 'Dashboard',
                 replace: 'Welcome, :user',
+                settings: 'Settings',
             }
         },
         ua: {
             php: {
                 dashboard: 'Дашборд',
                 replace: 'Привіт, :user',
+
             }
         }
     }
@@ -28,6 +30,14 @@ test('trans is translating ua string', () => {
         Lingua,
         locale: 'ua'
     })).toBe('Дашборд')
+});
+
+test('trans is translating ua string but from fallback', () => {
+    expect(trans('settings', {}, false, {
+        Lingua,
+        locale: 'ua',
+        fallbackLocale: 'en'
+    })).toBe('Settings')
 });
 
 test('trans is translating en string with replace', () => {
