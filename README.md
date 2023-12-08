@@ -105,6 +105,48 @@ Add `locale` key into your `HandleInertiaRequest::share` method
 ```
 That's how your application will know your initial locale.
 
+### Svelte
+
+Create a component called `Lingua.svelte` (or whatever you want) and add this code to it:
+
+```js
+<script context="module">
+import {trans as linguaTrans} from 'lingua-js'
+import {Lingua} from "@/lingua.js";
+
+export function __(key, replace, pluralize) {
+    return linguaTrans(key, replace, pluralize, getConfig());
+}
+
+export function t(key, replace, pluralize) {
+    return linguaTrans(key, replace, pluralize, getConfig());
+}
+
+export function trans(key, replace, pluralize) {
+    return linguaTrans(key, replace, pluralize, getConfig());
+}
+
+function getConfig() {
+    return {
+        locale: document.documentElement.lang, // or from inertia store $page.props.locale
+        Lingua: Lingua
+    }
+}
+</script>
+```
+
+And the use it in your components like:
+
+```html
+<script>
+    import {trans} from './Lingua.svelte'
+</script>
+
+<h1>{trans('Hello World')}</h1> 
+<h1>{t('Hello World')}</h1>
+<h1>{__('Hello World')}</h1>
+```
+
 ### React
 
 Coming soon
