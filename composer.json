@@ -2,8 +2,8 @@
     "name": "cyberwolfstudio/lingua",
     "description": "Add your Laravel language translations to your asset pipeline for use in Javascript packages like Vue or React.",
     "require": {
-        "php": "^8.1",
-        "laravel/framework": "^9.0|^10.0"
+        "php": "^8.2",
+        "laravel/framework": "^9.0|^10.0|^11.0"
     },
     "license": "MIT",
     "authors": [
