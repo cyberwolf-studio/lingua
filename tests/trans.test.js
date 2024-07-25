@@ -21,7 +21,8 @@ const Lingua = {
         },
         pl: {
             php: {
-                dashboard: 'Panel'
+                dashboard: 'Panel',
+                "Please enter your email address.": "Proszę podaj swój adres email.",
             }
         }
     }
@@ -38,6 +39,16 @@ test('trans is translating string', () => {
 
 test('trans is translating nested object', () => {
     expect(trans('settings.title', {}, false, config)).toBe('Settings')
+});
+
+test("trans is translating key containing dot character", () => {
+    const configPl = {
+        Lingua: Lingua,
+        locale: "pl",
+    };
+    expect(trans("Please enter your email address.", {}, false, configPl)).toBe(
+        "Proszę podaj swój adres email."
+    );
 });
 
 test('trans is replacing key', () => {

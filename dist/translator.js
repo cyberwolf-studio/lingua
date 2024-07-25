@@ -5,8 +5,9 @@ export const trans = (key, replace, pluralize, config) => {
     let translation = null
 
     try {
-        translation = key
-            .split('.')
+        translation =
+            Lingua.translations[locale].php?.[key] ??
+            key.split('.')
             .reduce((t, i) => t[i] || null, Lingua.translations[locale].php)
 
         if (translation) {
@@ -16,8 +17,9 @@ export const trans = (key, replace, pluralize, config) => {
     }
 
     try {
-        translation = key
-            .split('.')
+        translation =
+            Lingua.translations[locale].json?.[key] ??
+            key.split('.')
             .reduce((t, i) => t[i] || null, Lingua.translations[locale].json)
 
         if (translation) {
