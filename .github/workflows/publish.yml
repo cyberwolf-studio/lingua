@@ -35,9 +35,16 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git diff --cached --quiet || git commit -m "chore(release): update changelog [skip ci]"
-          git push
+          
+          # Checkout the main branch
+          git checkout main
+          
+          # Merge the release commit into the main branch to include changelog changes
+          # Use --no-ff to create a merge commit even if it's a fast-forward
+          git merge --no-ff ${{ github.sha }} -m "Merge release commit ${{ github.ref_name }} to update changelog"
+          
+          # Push the main branch
+          git push origin main # Or your default branch name
 
       - name: Publish packages with Lerna
         run: npx lerna publish from-git --yes
