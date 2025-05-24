@@ -29,9 +29,9 @@ final class Install extends Command
     public function handle(): void
     {
         $frameworks = [
-            'vue' => '@lingua/vue',
-            'react' => '@lingua/react',
-            'svelte' => '@lingua/svelte',
+            'vue' => '@cyberwolf.studio/lingua-vue',
+            'react' => '@cyberwolf.studio/lingua-react',
+            'svelte' => '@cyberwolf.studio/lingua-svelte',
         ];
 
         $choice = $this->choice(
