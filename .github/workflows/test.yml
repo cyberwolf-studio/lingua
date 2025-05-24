@@ -22,7 +22,7 @@ jobs:
 
       - name: Run tests in all packages
         run: |
-          yarn workspace @lingua/core test
-          yarn workspace @lingua/react test
-          yarn workspace @lingua/svelte test
-          yarn workspace @lingua/vue test
+          yarn workspace @cyberwolf.studio/lingua-core test
+          yarn workspace @cyberwolf.studio/lingua-react test
+          yarn workspace @cyberwolf.studio/lingua-svelte test
+          yarn workspace @cyberwolf.studio/lingua-vue test

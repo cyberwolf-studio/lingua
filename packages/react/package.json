@@ -26,5 +26,6 @@
     "type": "git",
     "url": "git+https://github.com/cyberwolf-studio/lingua.git"
   },
-  "homepage": "https://github.com/cyberwolf-studio/lingua#readme"
+  "homepage": "https://github.com/cyberwolf-studio/lingua#readme",
+  "gitHead": "420a9d0b3ea23498136f6a01edcefd37ac1d1106"
 }
