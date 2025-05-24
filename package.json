@@ -1,6 +1,7 @@
 {
   "type": "module",
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.0",
     "lerna": "^8.2.2"
   },
   "name": "lingua",
