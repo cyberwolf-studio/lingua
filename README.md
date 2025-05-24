@@ -10,14 +10,7 @@
 # Generate translations into JS file
 
 This library allows you to generate your Laravel translations to your asset pipeline for use in JavaScript packages like
-Vue. (React coming soon)
-
-# Requirements
-
-* **Laravel**: ^9.* or higher
-* **InertiaJS**: ^1.*
-* **VueJS**: ^3.*
-* **ViteJS**: ^3.*
+Vue, React and Svelte.
 
 # Installation
 
