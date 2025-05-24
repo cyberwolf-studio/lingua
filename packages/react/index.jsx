@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { trans as linguaTrans } from '@lingua/core';
+import { trans as linguaTrans } from '@cyberwolf.studio/lingua-core';
 
 // Create LinguaContext
 const LinguaContext = createContext();

@@ -1,4 +1,4 @@
-import { trans } from '@lingua/core'
+import { trans } from '@cyberwolf.studio/lingua-core'
 import { computed } from "vue";
 import { usePage } from '@inertiajs/vue3'
 

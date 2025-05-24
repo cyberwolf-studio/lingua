@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { trans } from '@lingua/core';
+import { trans } from '@cyberwolf.studio/lingua-core';
 
 // Svelte Stores
 const currentLocale = writable(null);

@@ -16,7 +16,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@lingua/core": "^0.1.0",
+    "@cyberwolf.studio/lingua-core": "^0.1.0",
     "svelte": "^5.33.1"
   },
   "repository": {
