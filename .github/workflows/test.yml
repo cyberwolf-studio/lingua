@@ -23,6 +23,6 @@ jobs:
       - name: Run tests in all packages
         run: |
           yarn workspace @lingua/core test
-          yarn workspace reactjs test
-          yarn workspace sveltejs test
-          yarn workspace vuejs test
+          yarn workspace @lingua/react test
+          yarn workspace @lingua/svelte test
+          yarn workspace @lingua/vue test
