@@ -1,13 +1,13 @@
 <?php
 
-namespace CyberWolfStudio\Lingua;
+namespace CyberWolfStudio\Lingua\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use JsonException;
 
-final class CommandTranslationGenerator extends Command
+final class Generate extends Command
 {
     /**
      * The name and signature of the console command.

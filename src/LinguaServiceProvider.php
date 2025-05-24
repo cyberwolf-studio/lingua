@@ -2,6 +2,8 @@
 
 namespace CyberWolfStudio\Lingua;
 
+use CyberWolfStudio\Lingua\Commands\Generate;
+use CyberWolfStudio\Lingua\Commands\Install;
 use Illuminate\Support\ServiceProvider;
 
 final class LinguaServiceProvider extends Serviceprovider
@@ -15,7 +17,8 @@ final class LinguaServiceProvider extends Serviceprovider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CommandTranslationGenerator::class,
+                Generate::class,
+                Install::class,
             ]);
         }
     }
