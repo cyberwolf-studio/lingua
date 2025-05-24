@@ -1,0 +1,31 @@
+{
+  "name": "@cyberwolf.studio/lingua-svelte",
+  "version": "0.1.5",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "CyberWolf Studio <contact@cyberwolf.studio>",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "jsdom": "^26.1.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@cyberwolf.studio/lingua-core": "^0.1.5",
+    "svelte": "^5.33.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberwolf-studio/lingua.git"
+  },
+  "homepage": "https://github.com/cyberwolf-studio/lingua#readme",
+  "gitHead": "63eb933b963c863eaa7c002304a3694f6f0a1490"
+}

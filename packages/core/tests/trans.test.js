@@ -7,7 +7,7 @@
  * 1) Test VueJS integration
  *
  */
-import { trans } from './../dist/translator'
+import { trans } from '../translator.js'
 const Lingua = {
     translations: {
         en: {

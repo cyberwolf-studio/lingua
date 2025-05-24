@@ -10,123 +10,74 @@
 # Generate translations into JS file
 
 This library allows you to generate your Laravel translations to your asset pipeline for use in JavaScript packages like
-Vue. (React coming soon)
+Vue, React and Svelte.
 
-# Requirements
-
-* **Laravel**: ^9.* or higher
-* **InertiaJS**: ^1.*
-* **VueJS**: ^3.*
-* **ViteJS**: ^3.*
-
-## Installation
+# Installation
 
 First, install the package via composer:
 
-``` bash
+```bash
 composer require cyberwolfstudio/lingua
 ```
 
-The package will automatically register itself.
+Next, run the install command to set up the frontend binding for your framework:
 
-Next add an alias to your `vite.config.js`
-
-```js
- resolve: {
-    alias: {
-        ...
-        'lingua-js': resolve(__dirname, 'vendor/cyberwolfstudio/lingua/dist/index.js')
-    },
-},
-```
-
-To build your Laravel translation into JS file, use:
 ```bash
-php artisan lingua:generate
+php artisan lingua:install
 ```
 
-You can automate that process as you wish.
-But we recommend you a vite plugin called [vite-plugin-run](https://github.com/innocenzi/vite-plugin-run)
-Install it using you package manager and just add this lines to your `vite.config.js` plugins section.
-```js
- run({
-    name: "generate translations",
-    run: ['php', 'artisan', 'lingua:generate'],
-    pattern: ['resources/lang/**', 'lang/**'],
-})
-```
+You will be prompted to select your frontend framework (Vue, React, or Svelte). The corresponding npm package will be installed automatically using your detected package manager (npm, yarn, or pnpm):
+- Vue: `@cyberwolf.studio/lingua-vue`
+- React: `@cyberwolf.studio/lingua-react`
+- Svelte: `@cyberwolf.studio/lingua-svelte`
 
-Example of usage: (running only at serve process)
-```
-{
-            ...run([
-                {
-                    name: 'generate translations',
-                    run: ['php', 'artisan', 'lingua:generate'],
-                    pattern: ['resources/lang/**', 'lang/**'],
-                },
-                {
-                    name: 'generate ziggy',
-                    run: ['php', 'artisan', 'ziggy:generate'],
-                    pattern: ['routes/**'],
-                }
-            ]),
-            apply: 'serve'
-        }
-```
+---
 
+# Usage
 
-
-### VueJS
-
-In your `resources/js/app.js` and (if you use SSR) `resources/js/ssr.js` add imports
-
-```js
-import { LinguaVue } from 'lingua-js'
-import { Lingua } from './lingua'
-```
-and register LinguaVue plugin
-
-```js
-...
-.use(LinguaVue, {
-    Lingua
-})
-```
-
-Add `locale` key into your `HandleInertiaRequest::share` method
+In Inertia.js, ensure your current locale is shared with the frontend by adding the following to your `HandleInertiaRequest::share` method:
 
 ```php
-[
-    ...
-    locale' => fn() => app()->getLocale(),
-    ...
-]
+// app/Http/Middleware/HandleInertiaRequests.php
+
+public function share(Request $request): array
+{
+    return array_merge(parent::share($request), [
+        'locale' => fn() => app()->getLocale(),
+    ]);
+}
 ```
-That's how your application will know your initial locale.
 
-### React
+## Vue
 
-To use Lingua with React, you need to import `LinguaProvider` and `useLingua` from the React bindings.
+Import and use the Lingua plugin from `@cyberwolf.studio/lingua-vue`:
 
-First, ensure you have your translations generated (e.g., as `Lingua` object, typically in a `lingua.js` file).
+```js
+// main.js or app.js
+import { LinguaVue } from '@cyberwolf.studio/lingua-vue';
+import { Lingua } from './lingua'; // Your generated translations
 
-In your main application file (e.g., `app.jsx` or `main.jsx`):
+const app = createApp(App)
+  .use(LinguaVue, { Lingua })
+  // ... other plugins
+
+app.mount('#app');
+```
+
+You can now use `this.trans`, `this.__`, and `this.transChoice` in your Vue components, or inject them as needed.
+
+## React
+
+Import `LinguaProvider` and `useLingua` from `@cyberwolf.studio/lingua-react`:
 
 ```jsx
-// Example: resources/js/app.jsx
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { LinguaProvider } from 'lingua-js/dist/react.js'; // Adjust path if necessary
+import { LinguaProvider, useLingua } from '@cyberwolf.studio/lingua-react';
 import { Lingua } from './lingua'; // Your generated translations
-import App from './App'; // Your main React app component
+import App from './App';
 
-// Assuming you get the initial locale from your backend, similar to the Laravel setup
-// This might be passed via props to your root component or fetched.
-// For this example, let's assume it's available as `initialPage.props.locale`
-// which is common in Inertia.js setups.
-const initialPage = JSON.parse(document.getElementById('app').dataset.page);
-const currentLocale = initialPage.props.locale || 'en'; // Fallback to 'en'
+const currentLocale = 'en'; // This should ideally come from your shared Inertia data
 
 const container = document.getElementById('app');
 const root = createRoot(container);
@@ -138,141 +89,96 @@ root.render(
 );
 ```
 
-The `Lingua` data object should be structured as follows (this is automatically handled by `php artisan lingua:generate`):
-```js
-// Example structure of the Lingua object (e.g., in lingua.js)
-export const Lingua = {
-    translations: {
-        en: {
-            php: {
-                "Hello": "Hello",
-                "Welcome :name": "Welcome :name"
-            },
-            json: {
-                "A simple string.": "A simple string.",
-                "Hello from JSON!": "Hello from JSON!"
-            }
-        },
-        // ...other locales
-    }
-    // Potentially other Lingua configuration data
-};
-```
-
-Then, in your React components, you can use the `useLingua` hook:
+In your components:
 
 ```jsx
-// Example: ./MyComponent.jsx
-import React from 'react';
-import { useLingua } from 'lingua-js/dist/react.js'; // Adjust path if necessary
+import { useLingua } from '@cyberwolf.studio/lingua-react';
 
 function MyComponent() {
   const { trans, transChoice, locale } = useLingua();
-
-  return (
-    <div>
-      <p>{trans('Hello')}</p>
-      <p>{trans('Welcome :name', { name: 'React User' })}</p>
-      {/* For transChoice, the second argument is the count for pluralization. */}
-      {/* The third (optional) argument is an object for any other replacements. */}
-      {/* The :count placeholder is automatically available based on the number passed as the second argument. */}
-      <p>{transChoice('item', 1)}</p> {/* Assuming 'item' key is like '1 item|:count items' or 'apple|apples' */}
-      <p>{transChoice('item', 5, { user_name: 'Jules' })}</p> {/* Example with additional replacements like :user_name */}
-      <p>Current locale: {locale}</p>
-    </div>
-  );
+  // ...
 }
-
-export default MyComponent;
 ```
 
-Remember to adjust the import paths for `lingua-js/dist/react.js` and `./lingua` based on your project's structure and how you've set up aliases if any. The `lingua-js` alias in the example `vite.config.js` points to `index.js`, not directly to the `dist` folder, so direct pathing is shown here.
+## Svelte
 
+Import and initialize Lingua in your Svelte app using `@cyberwolf.studio/lingua-svelte`:
 
-### Svelte
-
-To use Lingua with Svelte, you'll import `setLingua`, `transSvelte`, `transChoiceSvelte`, and the `currentLocale` store from the Svelte bindings.
-
-First, ensure you have your translations generated (e.g., as `Lingua` object, typically in a `lingua.js` file).
-
-Initialize Lingua, typically in your main Svelte setup (e.g., `app.js` or near your root component's script section, or in a layout component).
-
-```javascript
-// Example: resources/js/app.js (or a root Svelte component's script)
-import { setLingua } from 'lingua-js/dist/svelte.js'; // Adjust path if necessary
+```js
+// main.js or a root Svelte component
+import { setLingua } from '@cyberwolf.studio/lingua-svelte';
 import { Lingua } from './lingua'; // Your generated translations
 
-// Assuming you get the initial locale from your backend.
-// This might be passed via props or fetched.
-// For this example, let's assume `initialLocale` is available.
-const initialLocale = 'en'; // Replace with your actual mechanism to get locale
-
+const initialLocale = 'en'; // This should ideally come from your shared Inertia data
 setLingua(initialLocale, Lingua);
 ```
 
-The `Lingua` data object (second argument to `setLingua`) should be structured as shown in the React or Vue.js examples (automatically handled by `php artisan lingua:generate`).
-
-Then, in your Svelte components, you can use the translation functions and the `currentLocale` store (often with Svelte's auto-subscription `$store` syntax):
+In your Svelte components:
 
 ```svelte
-<!-- Example: MyComponent.svelte -->
 <script>
-  import { transSvelte, transChoiceSvelte, currentLocale } from 'lingua-js/dist/svelte.js'; // Adjust path
-  // Or if you prefer reactive statements for non-auto-subscribed usage:
-  // import { get } from 'svelte/store';
-  // const t = (key, replacements) => transSvelte(key, replacements);
-  // const tc = (key, number, replacements) => transChoiceSvelte(key, number, replacements);
+  import { trans, transChoice, currentLocale } from '@cyberwolf.studio/lingua-svelte';
 </script>
 
-<div>
-  <p>{$transSvelte('Hello')}</p>
-  <p>{$transSvelte('Welcome :name', { name: 'Svelte User' })}</p>
-  
-  <!-- Example for pluralization, assuming 'item' key is set up with plural forms -->
-  <!-- For transChoiceSvelte, the second argument is the count for pluralization. -->
-  <!-- The third (optional) argument is an object for any other replacements. -->
-  <!-- The :count placeholder is automatically available based on the number passed as the second argument. -->
-  <p>{$transChoiceSvelte('item', 1)}</p> <!-- Assuming 'item' key is like '1 item|:count items' or 'apple|apples' -->
-  <p>{$transChoiceSvelte('item', 5, { user_name: 'Jules' })}</p> <!-- Example with additional replacements like :user_name -->
-  
-  <p>Current locale: {$currentLocale}</p>
-</div>
-
-<!--
-  If you are not using Vite or a preprocessor that supports Svelte's auto-subscription
-  for imported stores directly in the template, you might need to assign them to local
-  variables in the script tag first, or use get(currentLocale), etc.
-  However, with typical Svelte setups (especially with Vite), $store syntax should work.
-
-  For non-auto-subscribed usage (less common for display):
-  <p>Current locale: {get(currentLocale)}</p>
-  <p>{transSvelte('Hello')}</p>
--->
+<p>{trans('Hello')}</p>
+<p>{trans('Welcome :name', { name: 'Svelte User' })}</p>
+<p>{transChoice('item', 1)}</p>
+<p>{transChoice('item', 5, { user_name: 'Jules' })}</p>
+<p>Current locale: {$currentLocale}</p>
 ```
 
-Remember to adjust the import paths for `lingua-js/dist/svelte.js` and `./lingua` based on your project's structure. The `lingua-js` alias in the example `vite.config.js` points to `index.js`, so direct pathing to `dist/svelte.js` is shown.
+# Generating Translations
 
-## Usage
+To build your Laravel translations into a JS file, use:
 
-
-## Usage
-
-In your template tag use it in Laravel style, like
-
-```js
-__(key: string, replacers: array)
-
-//or
-
-trans(key: string, replacers: array)
+```bash
+php artisan lingua:generate
 ```
 
-You can also use trans in your `setup` function by injecting it.
+This will generate the `Lingua` object for your frontend.
+
+To automate this process during development, you can use a Vite plugin like [vite-plugin-run](https://github.com/innocenzi/vite-plugin-run). Install the plugin and add the following to your `vite.config.js` plugins section:
 
 ```js
-const trans = inject('trans') 
+run({
+    name: "generate translations",
+    run: ['php', 'artisan', 'lingua:generate'],
+    pattern: ['resources/lang/**', 'lang/**'],
+})
+```
+
+This configuration will automatically run `php artisan lingua:generate` whenever files in `resources/lang` or `lang` directories are changed.
+
+You can also combine this with other commands and specify when the plugin should run. For example, to generate translations and Ziggy routes only during development (when running `vite dev` or `vite serve`):
+
+```js
+{
+  ...run([
+    {
+      name: 'generate translations',
+      run: ['php', 'artisan', 'lingua:generate'],
+      pattern: ['resources/lang/**', 'lang/**'],
+    },
+    {
+      name: 'generate ziggy',
+      run: ['php', 'artisan', 'ziggy:generate'],
+      pattern: ['routes/**'],
+    }
+  ]),
+  apply: 'serve'
+}
 ```
 
 # Changelog
 
 All changes made here will be described in [Changelog.md](./CHANGELOG.md) file.
+
+# Monorepo Structure
+
+The project uses a monorepo structure to manage separate packages for different frontend frameworks. Each framework has its own directory under `packages/`:
+
+- `packages/vue` — VueJS package
+- `packages/react` — ReactJS package
+- `packages/svelte` — SvelteJS package
+
+Each package is independently managed and can contain its own source code, dependencies, and build scripts. This structure allows for better organization and separation of concerns between different frontend implementations.

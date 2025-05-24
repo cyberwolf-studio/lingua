@@ -1,4 +1,4 @@
-import { trans } from './../dist/translator'
+import { trans } from '../translator.js'
 const Lingua = {
     translations: {
         en: {

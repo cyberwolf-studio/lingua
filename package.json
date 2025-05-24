@@ -1,31 +1,29 @@
 {
-    "type": "module",
-    "scripts": {
-        "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
-    },
-    "devDependencies": {
-        "@babel/preset-env": "^7.23.5",
-        "@babel/preset-react": "^7.23.3",
-        "@testing-library/react": "^14.1.2",
-        "@testing-library/svelte": "^4.0.5",
-        "babel-jest": "^29.7.0",
-        "jest": "^29.5.0",
-        "jest-environment-jsdom": "^29.7.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "svelte": "^4.2.8",
-        "svelte-jester": "^2.3.2"
-    },
-    "jest": {
-        "testEnvironment": "jsdom",
-        "transform": {
-            "^.+\\.jsx?$": "babel-jest",
-            "^.+\\.svelte$": "svelte-jester"
-        },
-        "moduleFileExtensions": [
-            "js",
-            "jsx",
-            "svelte"
-        ]
-    }
+  "type": "module",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.0",
+    "lerna": "^8.2.2"
+  },
+  "name": "lingua",
+  "version": "1.0.0",
+  "description": "Lingua is a library to create bindings for the Laravel translation system and InertiaJS with frontend frameworks (React, Vue, Svelte, and more). Provides a shared core and framework-specific packages for seamless localization.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberwolf-studio/lingua.git"
+  },
+  "keywords": [],
+  "author": "CyberWolf Studio <contact@cyberwolf.studio>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cyberwolf-studio/lingua/issues"
+  },
+  "homepage": "https://github.com/cyberwolf-studio/lingua#readme",
+  "workspaces": [
+    "packages/core",
+    "packages/react",
+    "packages/vue",
+    "packages/svelte"
+  ],
+  "private": true
 }

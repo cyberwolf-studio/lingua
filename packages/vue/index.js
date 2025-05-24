@@ -1,5 +1,5 @@
-import {trans} from './translator.js'
-import {computed} from "vue";
+import { trans } from '@cyberwolf.studio/lingua-core'
+import { computed } from "vue";
 import { usePage } from '@inertiajs/vue3'
 
 // prettier-ignore
@@ -16,7 +16,7 @@ export const LinguaVue = {
             locale: configuration.value.locale
         })
 
-        const translationWithPluralizationCallback = (key, replace, config = configuration) => trans(key, replace, true, {
+        const translationWithPluralizationCallback = (key, number, replace, config = configuration) => trans(key, { ...replace, count: number }, true, {
             Lingua: configuration.value.Lingua,
             locale: configuration.value.locale
         })
@@ -28,9 +28,11 @@ export const LinguaVue = {
                 transChoice: translationWithPluralizationCallback
             }
         });
+
         v.provide('trans', translationCallback)
         v.provide('transChoice', translationWithPluralizationCallback)
         v.provide('locale', locale)
+
         return v
     }
 }

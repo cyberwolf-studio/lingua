@@ -1,0 +1,25 @@
+{
+  "name": "@cyberwolf.studio/lingua-core",
+  "version": "0.1.5",
+  "main": "translator.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberwolf-studio/lingua.git"
+  },
+  "author": "CyberWolf Studio <contact@cyberwolf.studio>",
+  "license": "MIT",
+  "homepage": "https://github.com/cyberwolf-studio/lingua#readme",
+  "gitHead": "63eb933b963c863eaa7c002304a3694f6f0a1490"
+}
