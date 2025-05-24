@@ -1,9 +1,12 @@
 {
   "name": "@cyberwolf.studio/lingua-react",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "index.jsx",
   "scripts": {
     "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [],
   "author": "CyberWolf Studio <contact@cyberwolf.studio>",
@@ -18,7 +21,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@cyberwolf.studio/lingua-core": "^0.1.4",
+    "@cyberwolf.studio/lingua-core": "^0.1.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -27,5 +30,5 @@
     "url": "git+https://github.com/cyberwolf-studio/lingua.git"
   },
   "homepage": "https://github.com/cyberwolf-studio/lingua#readme",
-  "gitHead": "420a9d0b3ea23498136f6a01edcefd37ac1d1106"
+  "gitHead": "63eb933b963c863eaa7c002304a3694f6f0a1490"
 }
