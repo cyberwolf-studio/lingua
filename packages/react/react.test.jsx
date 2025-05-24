@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
-import { LinguaProvider, useLingua } from '../dist/react.js';
+import { render, screen } from '@testing-library/react';
+import { LinguaProvider, useLingua } from './index.jsx';
 
 const mockLinguaData = {
   translations: {

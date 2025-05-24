@@ -276,3 +276,13 @@ const trans = inject('trans')
 # Changelog
 
 All changes made here will be described in [Changelog.md](./CHANGELOG.md) file.
+
+## Monorepo Structure
+
+The project now uses a monorepo structure to manage separate packages for different frontend frameworks. Each framework has its own directory under `packages/`:
+
+- `packages/vuejs` — VueJS package
+- `packages/reactjs` — ReactJS package
+- `packages/sveltejs` — SvelteJS package
+
+Each package is independently managed and can contain its own source code, dependencies, and build scripts. This structure allows for better organization and separation of concerns between different frontend implementations.

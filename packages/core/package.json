@@ -1,0 +1,21 @@
+{
+  "name": "@lingua/core",
+  "version": "1.0.0",
+  "main": "translator.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^3.1.4",
+    "vite": "^6.3.5",
+    "jsdom": "^26.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberwolf-studio/lingua.git"
+  },
+  "author": "CyberWolf Studio <contact@cyberwolf.studio>",
+  "license": "MIT",
+  "homepage": "https://github.com/cyberwolf-studio/lingua#readme"
+}

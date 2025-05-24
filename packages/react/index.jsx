@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { trans as linguaTrans } from './translator.js';
+import { trans as linguaTrans } from '@lingua/core';
 
 // Create LinguaContext
 const LinguaContext = createContext();
@@ -22,18 +22,20 @@ const useLingua = () => {
 
   const { locale, Lingua } = context;
 
-  const trans = (key, replacements = {}) => {
-    // Call linguaTrans with pluralizeBoolean = false
-    return linguaTrans(key, replacements, false, { Lingua, locale });
+  const trans = (key, replacements = {}, pluralize = false) => {
+    return linguaTrans(key, replacements, pluralize, { Lingua, locale });
+  };
+
+  const __ = (key, replacements = {}, pluralize = false) => {
+    return trans(key, replacements, pluralize);
   };
 
   const transChoice = (key, number, replacements = {}) => {
-    // Add count to replacements and call linguaTrans with pluralizeBoolean = true
     const newReplacements = { ...replacements, count: number };
     return linguaTrans(key, newReplacements, true, { Lingua, locale });
   };
 
-  return { locale, trans, transChoice };
+  return { locale, trans, transChoice, __ };
 };
 
-export { LinguaProvider, useLingua, LinguaContext };
+export { LinguaProvider, useLingua, LinguaContext, useLingua as default };
