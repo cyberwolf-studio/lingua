@@ -33,6 +33,11 @@ jobs:
       - name: Generate changelog
         run: conventional-changelog -p angular -i CHANGELOG.md -s
 
+      - name: Publish packages with Lerna
+        run: npx lerna publish from-git --yes
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Commit changelog if changed
         run: |
           git config --global user.name "github-actions[bot]"
@@ -46,9 +51,4 @@ jobs:
           git merge --no-ff ${{ github.sha }} -m "Merge release commit ${{ github.ref_name }} to update changelog"
           
           # Push the main branch
-          git push origin main # Or your default branch name
-
-      - name: Publish packages with Lerna
-        run: npx lerna publish from-git --yes
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} 
+          git push origin main # Or your default branch name 
