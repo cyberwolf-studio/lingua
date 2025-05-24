@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { trans } from '@lingua/core';
+import { trans } from '@cyberwolf.studio/lingua-core';
 
 describe('VueJS translation integration', () => {
   const Lingua = {
