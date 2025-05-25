@@ -12,6 +12,12 @@
 This library allows you to generate your Laravel translations to your asset pipeline for use in JavaScript packages like
 Vue, React and Svelte.
 
+---
+
+**For detailed documentation, installation guides, and usage examples, please visit the [Lingua Documentation Website](#).**
+
+---
+
 # Installation
 
 First, install the package via composer:

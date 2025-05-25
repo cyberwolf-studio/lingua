@@ -2,7 +2,9 @@
   "type": "module",
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.0",
-    "lerna": "^8.2.2"
+    "lerna": "^8.2.2",
+    "vitepress": "^1.6.3",
+    "vue": "^3.5.14"
   },
   "name": "lingua",
   "version": "1.0.0",
@@ -25,5 +27,10 @@
     "packages/vue",
     "packages/svelte"
   ],
-  "private": true
+  "private": true,
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  }
 }
