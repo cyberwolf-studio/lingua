@@ -47,9 +47,9 @@ Using Options API (within components):
 ```vue
 <template>
   <div>
-    <p>{{ this.trans('your.translation.key') }}</p>
-    <p>{{ this.__('another.key', { name: 'User' }) }}</p>
-    <p>{{ this.transChoice('item', 1) }}</p>
+    <p>{{ trans('your.translation.key') }}</p>
+    <p>{{ __('another.key', { name: 'User' }) }}</p>
+    <p>{{ transChoice('item', 1) }}</p>
   </div>
 </template>
 
