@@ -13,13 +13,9 @@ This library allows you to generate your Laravel translations to your asset pipe
 
 ---
 
-**For detailed documentation, installation guides, and usage examples, please visit the [Lingua Documentation Website](https://cyberwolfstudio.github.io/lingua/).**
+**For detailed documentation, installation guides, and usage examples, please visit the [Lingua Documentation Website](https://cyberwolf-studio.github.io/lingua/).**
 
 ---
-
-## Contribution
-
-We welcome contributions to Lingua! Please see our [Contributing Guide](#) for details on how to get involved.
 
 ## Contributors
 
