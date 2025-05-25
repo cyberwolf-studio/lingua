@@ -4,8 +4,6 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Lingua Documentation",
   description: "Documentation for the Lingua project",
-  base: '/lingua/',
-  outDir: '../dist',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

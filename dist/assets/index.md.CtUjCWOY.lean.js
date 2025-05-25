@@ -1,1 +1,0 @@
-import{_ as t,c as a,o,ae as n}from"./chunks/framework.DYYkf9m7.js";const g=JSON.parse('{"title":"Lingua Documentation","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),i={name:"index.md"};function r(s,e,l,d,u,c){return o(),a("div",null,e[0]||(e[0]=[n("",7)]))}const f=t(i,[["render",r]]);export{g as __pageData,f as default};
