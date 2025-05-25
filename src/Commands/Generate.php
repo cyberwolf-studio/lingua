@@ -2,6 +2,7 @@
 
 namespace CyberWolfStudio\Lingua\Commands;
 
+use CyberWolfStudio\Lingua\TranslationPayload;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
