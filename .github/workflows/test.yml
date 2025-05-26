@@ -26,3 +26,14 @@ jobs:
           yarn workspace @cyberwolf.studio/lingua-react test
           yarn workspace @cyberwolf.studio/lingua-svelte test
           yarn workspace @cyberwolf.studio/lingua-vue test
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'  # Or your desired PHP version
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run Pest tests
+        run: vendor/bin/pest
