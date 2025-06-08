@@ -5,40 +5,70 @@ use Illuminate\Support\Str;
 
 uses(Tests\TestCase::class);
 
-it('lingua:generate command creates translation file', function () {
-    // Define a temporary path for the output file
-    $outputPath = storage_path('lingua_test_' . Str::random(10) . '.js');
+beforeEach(function () {
+    // Create test output path
+    $this->outputPath = storage_path('lingua_test_' . Str::random(10) . '.js');
+    File::makeDirectory(dirname($this->outputPath), 0777, true, true);
 
-    // Ensure the directory for the output path exists
-    File::makeDirectory(dirname($outputPath), 0777, true, true);
+    // Create test language file
+    $this->langPath = lang_path('uk/messages.php');
+    File::makeDirectory(dirname($this->langPath), 0777, true, true);
+    File::put($this->langPath, "<?php\n\nreturn ['hello' => 'Привіт Світе'];");
+});
 
-    // Create a dummy language file
-    $langPath = lang_path('uk/messages.php');
-    File::makeDirectory(dirname($langPath), 0777, true, true);
-    File::put($langPath, "<?php\n\nreturn ['hello' => 'Привіт Світе'];");
+afterEach(function () {
+    // Clean up test files
+    File::delete($this->langPath);
+    File::delete($this->outputPath);
+    File::delete(lang_path('uk.json'));
+});
 
-    // Run the artisan command
-    $this->artisan('lingua:generate', ['path' => $outputPath])
+test('it can compile php locale files', function () {
+    // Run the command
+    $this->artisan('lingua:generate', ['path' => $this->outputPath])
         ->assertExitCode(0);
 
-    // Assert that the output file was created
-    $this->assertFileExists($outputPath);
+    // Verify file exists
+    expect($this->outputPath)->toBeFile();
 
-    // Read the generated file content
-    $content = File::get($outputPath);
+    // Get file content
+    $content = File::get($this->outputPath);
 
-    // Define the expected JSON string structure for the translations
-    $expectedJsonSubstring = '"uk":{"php":{"messages":{"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"}}'; // Start of the expected structure
-    // Note: We are not asserting the full JSON content including default validation messages
-    // as they might change. We focus on our added translation and the structure.
+    // Verify file structure and content
+    expect($content)
+        ->toContain('const Lingua = { translations: {')
+        ->toContain('export { Lingua }')
+        ->toContain('"uk":{"php":{"messages":{"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"}}')
+        ->toContain('"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"');
+});
 
-    // Assert that the content is a valid JS file with the expected structure and translation
-    $this->assertStringContainsString('const Lingua = { translations: {', $content);
-    $this->assertStringContainsString($expectedJsonSubstring, $content);
-    $this->assertStringContainsString('"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"', $content);
-    $this->assertStringContainsString('export { Lingua }', $content);
+test('it can compile both php and json locale files for the same locale', function () {
+    // Create JSON file for the same locale
+    $jsonContent = json_encode([
+        'welcome' => 'Ласкаво просимо',
+        'nested' => [
+            'key' => 'Вкладене значення'
+        ]
+    ]);
+    File::put(lang_path('uk.json'), $jsonContent);
 
-    // Clean up the dummy language file and the generated file
-    File::delete($langPath);
-    File::delete($outputPath);
+    // Run the command
+    $this->artisan('lingua:generate', ['path' => $this->outputPath])
+        ->assertExitCode(0);
+
+    // Verify file exists
+    expect($this->outputPath)->toBeFile();
+
+    // Get file content
+    $content = File::get($this->outputPath);
+
+    // Verify file structure and content
+    expect($content)
+        ->toContain('const Lingua = { translations: {')
+        ->toContain('export { Lingua }')
+        // Verify PHP translations
+        ->toContain('"uk":{"php":{"messages":{"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"}}')
+        // Verify JSON translations
+        ->toContain('"welcome":"\u041b\u0430\u0441\u043a\u0430\u0432\u043e \u043f\u0440\u043e\u0441\u0438\u043c\u043e"')
+        ->toContain('"nested":{"key":"\u0412\u043a\u043b\u0430\u0434\u0435\u043d\u0435 \u0437\u043d\u0430\u0447\u0435\u043d\u043d\u044f"');
 });
