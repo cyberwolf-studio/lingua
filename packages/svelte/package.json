@@ -1,6 +1,6 @@
 {
   "name": "@cyberwolf.studio/lingua-svelte",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "scripts": {
     "test": "vitest run"
@@ -19,7 +19,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@cyberwolf.studio/lingua-core": "^1.0.3",
+    "@cyberwolf.studio/lingua-core": "^1.0.4",
     "svelte": "^5.33.1"
   },
   "repository": {

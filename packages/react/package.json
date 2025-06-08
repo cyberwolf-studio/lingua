@@ -1,6 +1,6 @@
 {
   "name": "@cyberwolf.studio/lingua-react",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.jsx",
   "scripts": {
     "test": "vitest run"
@@ -21,7 +21,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@cyberwolf.studio/lingua-core": "^1.0.3",
+    "@cyberwolf.studio/lingua-core": "^1.0.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
