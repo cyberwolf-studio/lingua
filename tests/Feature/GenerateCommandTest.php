@@ -13,7 +13,7 @@ it('lingua:generate command creates translation file', function () {
     File::makeDirectory(dirname($outputPath), 0777, true, true);
 
     // Create a dummy language file
-    $langPath = lang_path('en/messages.php');
+    $langPath = lang_path('pl/messages.php');
     File::makeDirectory(dirname($langPath), 0777, true, true);
     File::put($langPath, "<?php\n\nreturn ['hello' => 'Hello World'];");
 

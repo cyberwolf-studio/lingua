@@ -41,13 +41,16 @@ class TranslationPayload
     {
         $path = lang_path($locale);
 
+        if (File::isDirectory($path)) {
+            return [];
+        }
+
         return collect(File::allFiles($path))->mapWithKeys(function (\SplFileInfo $file) use ($locale) {
             $key = str($file->getPathname())
                 ->replace([lang_path(), '.php'], '')
-                ->replace(DIRECTORY_SEPARATOR.$locale.DIRECTORY_SEPARATOR, '')
+                ->replace(DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR, '')
                 ->toString();
-            $keyPath = explode(DIRECTORY_SEPARATOR, $key);
-            $keyPath = array_reverse($keyPath);
+
             return [
                 str($key)->replace(DIRECTORY_SEPARATOR, '.')->toString() => trans($key, [], $locale)
             ];
