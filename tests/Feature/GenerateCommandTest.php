@@ -13,9 +13,9 @@ it('lingua:generate command creates translation file', function () {
     File::makeDirectory(dirname($outputPath), 0777, true, true);
 
     // Create a dummy language file
-    $langPath = lang_path('pl/messages.php');
+    $langPath = lang_path('uk/messages.php');
     File::makeDirectory(dirname($langPath), 0777, true, true);
-    File::put($langPath, "<?php\n\nreturn ['hello' => 'Hello World'];");
+    File::put($langPath, "<?php\n\nreturn ['hello' => 'Привіт Світе'];");
 
     // Run the artisan command
     $this->artisan('lingua:generate', ['path' => $outputPath])
@@ -28,14 +28,14 @@ it('lingua:generate command creates translation file', function () {
     $content = File::get($outputPath);
 
     // Define the expected JSON string structure for the translations
-    $expectedJsonSubstring = '"en":{"php":{"messages":{"hello":"Hello World"}}'; // Start of the expected structure
+    $expectedJsonSubstring = '"uk":{"php":{"messages":{"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"}}'; // Start of the expected structure
     // Note: We are not asserting the full JSON content including default validation messages
     // as they might change. We focus on our added translation and the structure.
 
     // Assert that the content is a valid JS file with the expected structure and translation
     $this->assertStringContainsString('const Lingua = { translations: {', $content);
     $this->assertStringContainsString($expectedJsonSubstring, $content);
-    $this->assertStringContainsString('"hello":"Hello World"', $content);
+    $this->assertStringContainsString('"hello":"\u041f\u0440\u0438\u0432\u0456\u0442 \u0421\u0432\u0456\u0442\u0435"', $content);
     $this->assertStringContainsString('export { Lingua }', $content);
 
     // Clean up the dummy language file and the generated file

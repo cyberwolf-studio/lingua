@@ -41,7 +41,7 @@ class TranslationPayload
     {
         $path = lang_path($locale);
 
-        if (File::isDirectory($path)) {
+        if (!File::isDirectory($path)) {
             return [];
         }
 
