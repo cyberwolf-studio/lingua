@@ -1,6 +1,6 @@
 {
   "name": "@cyberwolf.studio/lingua-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "translator.js",
   "type": "module",
   "scripts": {
