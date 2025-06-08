@@ -73,13 +73,16 @@ final class Generate extends Command
         $locales = [];
 
         $directories = File::directories(lang_path());
+        $files = File::files(lang_path());
 
-        foreach ($directories as $dir) {
-            $path = str_replace(lang_path() . DIRECTORY_SEPARATOR, '', $dir);
+        $paths = array_merge($directories, $files);
+
+        foreach ($paths as $path) {
+            $path = str_replace([lang_path() . DIRECTORY_SEPARATOR, '.json'], '', $path);
             $locales[] = $path;
         }
 
-        $json = TranslationPayload::compile($locales)->toJson();
+        $json = TranslationPayload::compile(array_unique($locales))->toJson();
 
         return <<<EOT
 const Lingua = { translations: $json }
@@ -93,14 +96,12 @@ EOT;
      * Make the directory if it doesn't exist.
      *
      * @param string $path
-     * @return string
+     * @return void
      */
-    protected function makeDirectory(string $path): string
+    private function makeDirectory(string $path): void
     {
         if (!$this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
-
-        return $path;
     }
 }
