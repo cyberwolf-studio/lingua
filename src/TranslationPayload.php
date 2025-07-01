@@ -32,6 +32,23 @@ class TranslationPayload
     }
 
     /**
+     * Get all translations for a single specified locale.
+     *
+     * @param string $locale
+     * @return array
+     * @throws JsonException
+     */
+    public static function getTranslationsForLocale(string $locale): array
+    {
+        $payload = new static();
+
+        return [
+            'php' => $payload->phpTranslations($locale),
+            'json' => $payload->jsonTranslations($locale),
+        ];
+    }
+
+    /**
      * Compile the PHP file translations.
      *
      * @param string $locale

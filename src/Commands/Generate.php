@@ -15,14 +15,14 @@ final class Generate extends Command
      *
      * @var string
      */
-    protected $signature = 'lingua:generate {path=./resources/js/lingua.js}';
+    protected $signature = 'lingua:generate {--path=public/translations} {--manifestPath=resources/js/lingua-manifest.js}';
 
     /**
      * The console command description.
      *
      * @var string|null
      */
-    protected $description = 'Generate translation js file for including in build process';
+    protected $description = 'Generate individual translation locale JSON files and a manifest file.';
 
     /**
      * Filesystem instance for moving files.
@@ -51,45 +51,108 @@ final class Generate extends Command
      */
     public function handle(): void
     {
-        $path = $this->argument('path');
+        $outputBasePath = $this->option('path');
+        $manifestPath = $this->option('manifestPath');
 
-        $translations = $this->generate();
+        $this->makeDirectory($outputBasePath);
+        $this->makeDirectory(dirname($manifestPath));
 
-        $this->makeDirectory($path);
+        $availableLocales = $this->getAvailableLocales();
 
-        $this->files->put($path, $translations);
+        if (empty($availableLocales)) {
+            $this->warn('No language files found. Looked in ' . lang_path());
+            return;
+        }
 
-        $this->info('Translations file generated.');
+        foreach ($availableLocales as $locale) {
+            // Call the new method directly to get translations for the specific locale
+            $localeTranslations = TranslationPayload::getTranslationsForLocale($locale);
+
+            // Check if $localeTranslations is empty (e.g. no php or json files for that locale)
+            if (empty($localeTranslations['php']) && empty($localeTranslations['json'])) {
+                $this->warn("No translations found for locale: {$locale}");
+                continue;
+            }
+
+            $filePath = rtrim($outputBasePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $locale . '.json';
+            $this->files->put($filePath, json_encode($localeTranslations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+            $this->info("Generated translations for locale: {$locale} at {$filePath}");
+        }
+
+        $this->generateManifestFile($manifestPath, $availableLocales, $outputBasePath);
+
+        $this->info('Lingua translation files and manifest generated successfully.');
     }
 
     /**
-     * Generate the translations for the file.
+     * Get all available locales based on directories and .json files in lang_path().
      *
-     * @return string
-     * @throws JsonException
+     * @return array
      */
-    public function generate(): string
+    private function getAvailableLocales(): array
     {
         $locales = [];
+        $langPath = lang_path();
 
-        $directories = File::directories(lang_path());
-        $files = File::files(lang_path());
-
-        $paths = array_merge($directories, $files);
-
-        foreach ($paths as $path) {
-            $path = str_replace([lang_path() . DIRECTORY_SEPARATOR, '.json'], '', $path);
-            $locales[] = $path;
+        // Get locales from directories like /lang/en, /lang/es
+        $directories = File::directories($langPath);
+        foreach ($directories as $dir) {
+            $locales[] = File::basename($dir);
         }
 
-        $json = TranslationPayload::compile(array_unique($locales))->toJson();
+        // Get locales from files like /lang/en.json, /lang/es.json
+        $jsonFiles = File::files($langPath);
+        foreach ($jsonFiles as $file) {
+            if (strtolower($file->getExtension()) === 'json') {
+                $locales[] = $file->getFilenameWithoutExtension();
+            }
+        }
 
-        return <<<EOT
-const Lingua = { translations: $json }
+        return array_values(array_unique($locales));
+    }
 
-export { Lingua }
+    /**
+     * Generate the manifest JS file.
+     *
+     * @param string $manifestPath
+     * @param array $availableLocales
+     * @param string $outputBasePath
+     * @return void
+     */
+    private function generateManifestFile(string $manifestPath, array $availableLocales, string $outputBasePath): void
+    {
+        // Assuming $outputBasePath is relative to the project's public directory.
+        // We need to make it a web-accessible path.
+        $publicPath = public_path();
+        $translationsBasePath = str_replace($publicPath, '', $outputBasePath);
+        $translationsBasePath = '/' . ltrim(str_replace(DIRECTORY_SEPARATOR, '/', $translationsBasePath), '/');
+        if (substr($translationsBasePath, -1) !== '/') {
+            $translationsBasePath .= '/';
+        }
 
+
+        $manifestContent = <<<EOT
+const LinguaManifest = {
+    availableLocales: Object.freeze(JSON.parse('{$this->jsonEncode($availableLocales)}')),
+    translationsBasePath: '{$translationsBasePath}'
+};
+
+export { LinguaManifest };
 EOT;
+
+        $this->files->put($manifestPath, $manifestContent);
+        $this->info("Generated manifest file at {$manifestPath}");
+    }
+
+    /**
+     * Helper to JSON encode data for embedding in JS.
+     *
+     * @param mixed $data
+     * @return string
+     */
+    private function jsonEncode($data): string
+    {
+        return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
