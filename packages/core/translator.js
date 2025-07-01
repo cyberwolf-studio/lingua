@@ -3,7 +3,7 @@
 import { LinguaManifest } from 'lingua-manifest';
 
 let loadedTranslations = {};
-let activeFetchPromises = {};
+let activeImportPromises = {}; // Renamed from activeFetchPromises
 let currentGlobalLocale = null; // Can be set by a global configuration
 
 /**
@@ -39,38 +39,52 @@ const loadLocaleData = async (locale) => {
         return Promise.resolve();
     }
 
-    if (activeFetchPromises[locale]) {
-        return activeFetchPromises[locale];
+    if (activeImportPromises[locale]) {
+        return activeImportPromises[locale];
     }
 
     if (!LinguaManifest.availableLocales.includes(locale)) {
         console.warn(`Lingua: Locale '${locale}' is not available. Available: ${LinguaManifest.availableLocales.join(', ')}`);
-        // Store empty data to prevent re-fetching a non-available locale
-        loadedTranslations[locale] = { php: {}, json: {} };
+        loadedTranslations[locale] = { php: {}, json: {} }; // Prevent re-attempts for unavailable locales
         return Promise.resolve();
     }
 
-    const fetchPromise = fetch(`${LinguaManifest.translationsBasePath}${locale}.json`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Lingua: Failed to load translations for locale '${locale}'. Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            loadedTranslations[locale] = data;
+    // Construct the path for dynamic import.
+    // LinguaManifest.translationsImportPrefix should be like './translations/lingua_locales/'
+    // Vite needs the path to be somewhat statically analyzable.
+    // The `${LinguaManifest.translationsImportPrefix}${locale}.json` might be too dynamic for some older bundlers,
+    // but Vite is generally good with this pattern if the prefix is consistent.
+    // To be absolutely safe for Vite's static analysis and ensure optimal chunking,
+    // the ideal is that `translationsImportPrefix` results in a path like `../translations/lingua_locales/${locale}.json`
+    // where the `../translations/lingua_locales/` part is static relative to this file.
+    // However, assuming `translationsImportPrefix` is correctly formed (e.g. './my_locales/') from Generate.php:
+
+    const importPath = `${LinguaManifest.translationsImportPrefix}${locale}.json`;
+
+    const importPromise = import(/* @vite-ignore */ importPath, { assert: { type: 'json' } })
+    // Note: Using /* @vite-ignore */ tells Vite not to try to statically analyze this exact path,
+    // which means Vite won't create separate chunks for each locale based on *this specific line*.
+    // Instead, it relies on the fact that if the `importPath` evaluates to something like
+    // './translations/lingua_locales/en.json', and Vite *does* scan that directory, it might pick them up.
+    // For more reliable Vite chunking, the import statement itself should be more static, e.g.:
+    //   `import(`./translations/lingua_locales/${locale}.json`)`
+    // This would require `translationsImportPrefix` to be a path that makes this possible.
+    // For now, we proceed with the configured prefix, accepting it might be less optimal for some bundlers if too dynamic.
+
+        .then(module => {
+            loadedTranslations[locale] = module.default; // .default is common for JSON modules
         })
         .catch(error => {
-            console.error(error);
-            // Store empty data on error to prevent re-fetching constantly on failure
+            console.error(`Lingua: Failed to import translations for locale '${locale}'. Path: ${importPath}`, error);
+            // Store empty data on error to prevent re-importing constantly on failure
             loadedTranslations[locale] = { php: {}, json: {} };
         })
         .finally(() => {
-            delete activeFetchPromises[locale];
+            delete activeImportPromises[locale];
         });
 
-    activeFetchPromises[locale] = fetchPromise;
-    return fetchPromise;
+    activeImportPromises[locale] = importPromise;
+    return importPromise;
 };
 
 /**

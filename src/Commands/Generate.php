@@ -15,14 +15,14 @@ final class Generate extends Command
      *
      * @var string
      */
-    protected $signature = 'lingua:generate {--path=public/translations} {--manifestPath=resources/js/lingua-manifest.js}';
+    protected $signature = 'lingua:generate {--path=resources/js/translations/lingua_locales} {--manifestPath=resources/js/lingua-manifest.js}';
 
     /**
      * The console command description.
      *
      * @var string|null
      */
-    protected $description = 'Generate individual translation locale JSON files and a manifest file.';
+    protected $description = 'Generate individual translation locale JSON files (for Vite dynamic import) and a manifest file.';
 
     /**
      * Filesystem instance for moving files.
@@ -121,28 +121,76 @@ final class Generate extends Command
      */
     private function generateManifestFile(string $manifestPath, array $availableLocales, string $outputBasePath): void
     {
-        // Assuming $outputBasePath is relative to the project's public directory.
-        // We need to make it a web-accessible path.
-        $publicPath = public_path();
-        $translationsBasePath = str_replace($publicPath, '', $outputBasePath);
-        $translationsBasePath = '/' . ltrim(str_replace(DIRECTORY_SEPARATOR, '/', $translationsBasePath), '/');
-        if (substr($translationsBasePath, -1) !== '/') {
-            $translationsBasePath .= '/';
+        // Calculate the relative path from the manifest file's directory to the translations output directory.
+        $manifestDir = dirname($manifestPath);
+        // Ensure outputBasePath is an absolute path or resolvable relative to CWD for getRelativePath
+        $outputBasePathAbs = $this->files->exists($outputBasePath) ? realpath($outputBasePath) : $outputBasePath;
+        if (!$this->files->isAbsolutePath($outputBasePathAbs)) {
+             $outputBasePathAbs = getcwd() . DIRECTORY_SEPARATOR . $outputBasePathAbs;
+        }
+        $outputBasePathAbs = rtrim(str_replace('/', DIRECTORY_SEPARATOR, $outputBasePathAbs), DIRECTORY_SEPARATOR);
+
+
+        $relativePath = $this->getRelativePath($manifestDir, $outputBasePathAbs);
+
+        // Ensure it's a POSIX-style relative path, suitable for JS imports.
+        $translationsImportPrefix = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $relativePath), '/') . '/';
+        // If the manifest is in the same directory or a parent of outputBasePath, prefix with './'
+        if (!preg_match('/^(\.\.\/|\.\/)/', $translationsImportPrefix)) {
+            $translationsImportPrefix = './' . $translationsImportPrefix;
         }
 
 
         $manifestContent = <<<EOT
 const LinguaManifest = {
     availableLocales: Object.freeze(JSON.parse('{$this->jsonEncode($availableLocales)}')),
-    translationsBasePath: '{$translationsBasePath}'
+    translationsImportPrefix: '{$translationsImportPrefix}' // Changed from translationsBasePath
 };
 
 export { LinguaManifest };
 EOT;
 
         $this->files->put($manifestPath, $manifestContent);
-        $this->info("Generated manifest file at {$manifestPath}");
+        $this->info("Generated manifest file at {$manifestPath} with importPrefix: {$translationsImportPrefix}");
     }
+
+    /**
+     * Calculate the relative path from one directory to another.
+     *
+     * @param string $from
+     * @param string $to
+     * @return string
+     */
+    private function getRelativePath(string $from, string $to): string
+    {
+        // Normalize directory separators and remove trailing slash for realpath
+        $from = rtrim(str_replace('/', DIRECTORY_SEPARATOR, $from), DIRECTORY_SEPARATOR);
+        $to = rtrim(str_replace('/', DIRECTORY_SEPARATOR, $to), DIRECTORY_SEPARATOR);
+
+        // Get real paths
+        $from = realpath($from) ?: $from;
+        $to = realpath($to) ?: $to;
+
+        $fromParts = explode(DIRECTORY_SEPARATOR, $from);
+        $toParts = explode(DIRECTORY_SEPARATOR, $to);
+
+        $commonParts = [];
+        foreach ($fromParts as $i => $part) {
+            if (isset($toParts[$i]) && $fromParts[$i] === $toParts[$i]) {
+                $commonParts[] = $part;
+            } else {
+                break;
+            }
+        }
+
+        $upwards = count($fromParts) - count($commonParts);
+        $downwards = array_slice($toParts, count($commonParts));
+
+        $relativePath = str_repeat('..' . DIRECTORY_SEPARATOR, $upwards) . implode(DIRECTORY_SEPARATOR, $downwards);
+
+        return $relativePath === '' ? '.' : $relativePath; // Stay in same dir if paths are identical after normalization
+    }
+
 
     /**
      * Helper to JSON encode data for embedding in JS.
